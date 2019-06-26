@@ -28,11 +28,11 @@ public class MovieCatalog {
 
 
         //Task 1. get all rated movie ids
-        UserRating ratings = restTemplate.getForObject("http://localhost:8092/ratingsdata/users/" + userId, UserRating.class);
+        UserRating ratings = restTemplate.getForObject("http://ratings-data-service/ratingsdata/users/" + userId, UserRating.class);
 
         //Task 2. For Each movie ID, call movie info service and get details
         return ratings.getUserRating().stream().map(rating -> {
-            Movie movie = restTemplate.getForObject("http://localhost:8091/movies/" + rating.getMovieId(), Movie.class);
+            Movie movie = restTemplate.getForObject("http://movie-info-service/movies/" + rating.getMovieId(), Movie.class);
             return new CatalogItem(movie.getName(), "thriller", rating.getRating());
 
             //Task 3.Put them all together
