@@ -4,6 +4,7 @@ import com.example.moviecatalogservice.models.CatalogItem;
 import com.example.moviecatalogservice.models.Movie;
 import com.example.moviecatalogservice.models.Rating;
 import com.example.moviecatalogservice.models.UserRating;
+import com.netflix.hystrix.contrib.javanica.annotation.HystrixCommand;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -23,6 +24,7 @@ public class MovieCatalog {
     @Autowired
     private RestTemplate restTemplate;
 
+    @HystrixCommand(fallbackMethod = "reliable")
     @RequestMapping("/{userId}")
     public List<CatalogItem> getCatalog(@PathVariable("userId") String userId) {
 
@@ -38,5 +40,10 @@ public class MovieCatalog {
             //Task 3.Put them all together
 
         }).collect(Collectors.toList());
+    }
+
+    // a fallback method to be called if failure happened
+    public List<CatalogItem> reliable(String userId, Throwable hystrixCommand) {
+        return new ArrayList<>();
     }
 }
